@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Master plan </title>
-    <!-- Agregar prefetch para evitar bloqueos -->
+   
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
@@ -1220,7 +1220,7 @@
 </select>
             </div>
             
-            <!-- Paso 2: Selección de destinatarios -->
+            <!--  Selección de destinatarios -->
             <div class="form-group">
                 <label>
                     <i class="fas fa-users"></i> Destinatarios:
@@ -1252,7 +1252,7 @@
                 </div>
             </div>
             
-            <!-- Paso 3: Vista previa del correo -->
+            <!--  Vista previa del correo -->
             <div class="form-group">
                 <label>
                     <i class="fas fa-eye"></i> Vista Previa del Correo:
@@ -1393,7 +1393,7 @@
     window.addEventListener('error', function(event) {
         console.error('Error global:', event.error);
         
-        // Verificar si es un error de Supabase
+        
         if (event.error && event.error.message && event.error.message.includes('Supabase')) {
             showError('Error de conexión con la base de datos. Por favor, recarga la página o intenta más tarde.');
         }
@@ -1402,7 +1402,7 @@
     window.addEventListener('unhandledrejection', function(event) {
         console.error('Promesa rechazada no manejada:', event.reason);
         
-        // Verificar si es un error de Supabase
+        
         if (event.reason && event.reason.message && event.reason.message.includes('Supabase')) {
             showError('Error de conexión con la base de datos. Por favor, recarga la página o intenta más tarde.');
         }
@@ -1413,7 +1413,7 @@
         console.log('DOM cargado - Inicializando aplicación');
         
         try {
-            // Primero inicializar Supabase
+            
             console.log('Inicializando Supabase...');
             const supabaseSuccess = await initSupabase();
             
@@ -1422,7 +1422,7 @@
                 events = [];
                 displayEvents('events-body', events);
                 
-                // Configurar botón de reintento
+                //  botón de reintento
                 const loadingRow = document.getElementById('loading-row');
                 if (loadingRow) {
                     loadingRow.innerHTML = `
@@ -1441,7 +1441,7 @@
                 console.log('Supabase inicializado correctamente');
             }
             
-            // Configurar botón administrador
+            //  botón administrador
             const adminBtn = document.getElementById('admin-access-btn');
             const loginModal = document.getElementById('login-modal');
             
@@ -1569,7 +1569,7 @@
         return new Promise((resolve) => {
             console.log('Cargando Supabase dinámicamente...');
             
-            // Verificar si ya está cargado
+            
             if (typeof supabase !== 'undefined') {
                 console.log('Supabase ya está cargado');
                 supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1578,7 +1578,7 @@
                 return;
             }
             
-            // Crear y cargar script
+            
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js';
             script.integrity = 'sha512-oew1/glSJ5oNs4qwfH/pzgrn9+kqHhW+lQuxYSOJ8ZnBue3hfs2oyDK1WuxwN3F07P3g1Ok/ONt0WZz0CqKAKQ==';
@@ -1633,7 +1633,7 @@
     
     // ========== CONFIGURAR EVENTOS DE MODALES ==========
     function setupModalEvents() {
-        // Cerrar modal login
+        
         const closeLoginBtn = document.getElementById('close-login-modal');
         if (closeLoginBtn) {
             closeLoginBtn.onclick = function() {
@@ -1809,7 +1809,7 @@
         }
     }
     
-    // ========== CONFIGURAR MODAL DE TEXTO ==========
+    // ========== MODAL DE TEXTO ==========
     function setupTextModalEvents() {
         // Cerrar modal de texto
         const closeTextBtn = document.getElementById('close-text-modal');
@@ -1820,7 +1820,7 @@
         }
     }
     
-    // ========== CONFIGURAR FILTROS DE FECHAS ==========
+    // ==========  FILTROS DE FECHAS ==========
     function setupDateFilters() {
         // Esta función está vacía pero se mantiene por consistencia
         console.log('Filtros de fechas configurados');
@@ -2025,7 +2025,7 @@
                 }
             }
             
-            // Determinar si es vista pública o admin
+            
             const isPublicView = tbodyId === 'events-body';
             
             html += `
@@ -2272,7 +2272,7 @@
     });
 }
         
-    // ========== FUNCIONES GLOBALES PARA BOTONES ==========
+    // ==========  GLOBALES PARA BOTONES ==========
     
     function toggleObservacion(element) {
         element.classList.toggle('expanded');
@@ -2352,7 +2352,7 @@
             uploadError.style.display = 'none';
             uploadSuccess.style.display = 'none';
             
-            // PRIMERO: Subir a Supabase Storage
+            //  Subir a Supabase Storage
             const { data: uploadData, error: uploadErrorStorage } = await supabaseClient.storage
                 .from('evidencias')
                 .upload(fileName, file, {
@@ -2379,7 +2379,7 @@
             
             console.log('URL pública obtenida:', urlData);
             
-            // SEGUNDO: Actualizar evento en la base de datos
+            //  Actualizar evento en la base de datos
             const { data: updateData, error: updateError } = await supabaseClient
                 .from('eventos')
                 .update({
@@ -2833,7 +2833,7 @@ ${observacion}`;
             errorDiv.style.maxWidth = '1400px';
             errorDiv.style.padding = '15px 20px';
             
-            // Insertar después del header
+            
             const header = document.querySelector('header');
             if (header) {
                 header.parentNode.insertBefore(errorDiv, header.nextSibling);
@@ -2957,7 +2957,7 @@ ${observacion}`;
         const container = document.getElementById('recipients-list-container');
         if (!container) return;
         
-        // Mostrar loading si no hay destinatarios
+        
         if (recipientsList.length === 0) {
             container.innerHTML = `
                 <div id="recipients-loading" style="text-align: center; padding: 20px;">
