@@ -257,12 +257,12 @@ tbody tr:hover { background: var(--gold-mid); }
 .badge-proceso { background: var(--orange-bg); color: var(--orange); }
 .badge-tbd { background: var(--blue-bg); color: var(--blue); }
 .badge-mayor { background: #eb660e; color: #ffffff; }
-.badge-menor { background: #F3F4F6; color: #6B7280; }
-.badge-critica { background: #FDECEA; color: #ff0101; }
+.badge-menor { background: #dce5f5; color: #6B7280; }
+.badge-critica { background: #d41b06; color: #ffffff; }
 .badge-observacion { background: var(--blue-bg); color: var(--blue); }
 .badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; }
 
-/* ── CELL TEXT — expandable ─────────────────── */
+/* ── CELL TEXT — con truncamiento y expansión ─────────────────── */
 .cell-text {
   display: block; font-size: 13px; color: var(--text);
   max-width: 180px;
@@ -283,6 +283,16 @@ tbody tr:hover { background: var(--gold-mid); }
   text-transform: uppercase; letter-spacing: .5px;
 }
 .expand-hint:hover { color: var(--red); }
+
+.cell-text-short {
+  display: block; 
+  font-size: 13px; 
+  color: var(--text);
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* ── ACTION ROW ─────────────────────────────── */
 .actions-cell { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
@@ -421,14 +431,6 @@ textarea.form-control { min-height: 90px; resize: vertical; }
 .notice-info { background: var(--blue-bg); color: var(--blue); border-left: 3px solid var(--blue); }
 .notice-warning { background: var(--orange-bg); color: var(--orange); border-left: 3px solid var(--orange); }
 
-/* ── OBSERVACION CELL ───────────────────────── */
-.obs-cell {
-  max-width: 150px; font-size: 12px; color: var(--text2);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  cursor: pointer; transition: var(--transition);
-}
-.obs-cell.expanded { white-space: normal; overflow: visible; max-width: 280px; background: rgba(253,208,0,.12); padding: 6px 8px; border-radius: 5px; border-left: 2px solid var(--gold); }
-
 /* ── EMAIL PREVIEW ──────────────────────────── */
 .preview-box { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; max-height: 280px; overflow-y: auto; font-size: 13px; }
 .email-stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
@@ -437,6 +439,56 @@ textarea.form-control { min-height: 90px; resize: vertical; }
 
 /* ── SEND STATUS ────────────────────────────── */
 #email-send-status { border-radius: var(--radius-sm); padding: 16px; margin-top: 14px; }
+
+/* ── EML VIEWER ────────────────────────────── */
+.eml-viewer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-top: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.eml-header {
+  background: var(--gold-pale);
+  border-left: 3px solid var(--gold-dark);
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+}
+
+.eml-header-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.eml-header-label {
+  font-weight: 700;
+  color: var(--text2);
+  min-width: 80px;
+}
+
+.eml-header-value {
+  color: var(--text);
+  flex: 1;
+  word-break: break-word;
+}
+
+.eml-body {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 350px;
+  overflow-y: auto;
+}
 
 /* ── RESPONSIVE ─────────────────────────────── */
 @media (max-width: 900px) {
@@ -672,14 +724,34 @@ textarea.form-control { min-height: 90px; resize: vertical; }
           <span class="file-type-tag">DOCX</span>
           <span class="file-type-tag">DOC</span>
           <span class="file-type-tag">WEBP</span>
+          <span class="file-type-tag">EML</span>
         </div>
-        <small>Tamaño máximo: 5 MB</small>
+        <small>Tamaño máximo: 5 MB · Ahora puedes subir correos (.eml)</small>
       </div>
-      <input type="file" id="evidence-file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,application/pdf,image/*,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none">
+      <input type="file" id="evidence-file" accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx,.eml,application/pdf,image/*,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,message/rfc822" style="display:none">
       <div id="file-preview" style="margin-top:10px;display:none"></div>
       <div id="upload-notice" style="margin-top:10px"></div>
       <button id="upload-submit" class="btn btn-primary" style="width:100%;margin-top:14px;justify-content:center">
         <i class="fas fa-upload"></i> Subir evidencia
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- EML VIEWER MODAL -->
+<div id="eml-modal" class="modal-overlay">
+  <div class="modal modal-xl">
+    <div class="modal-head">
+      <div class="brand-icon" style="background:linear-gradient(135deg,var(--purple),#4a0082)"><i class="fas fa-envelope"></i></div>
+      <h2>Visualización de correo electrónico</h2>
+      <button class="modal-close" data-close="eml-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="eml-content" class="eml-viewer">
+        <div class="spinner" style="margin: 40px auto;"></div>
+      </div>
+      <button id="eml-download-btn" class="btn btn-info" style="width:100%;margin-top:14px;justify-content:center">
+        <i class="fas fa-download"></i> Descargar archivo original
       </button>
     </div>
   </div>
@@ -979,6 +1051,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const ADMIN_PASSWORD = '&U6%Ux';
 
 let sb = null, events = [], isAdmin = false, chartInst = null, currentFilter = 'all';
+let currentEmlUrl = null; // Para almacenar URL del .eml que se está visualizando
 
 const RECIPIENTS = [
   { id:1,  name:'German Fueyo Arce',                    email:'GERMAN FUEYO ARCE (DHL Supply Chain) <german.fueyoarce@dhl.com>' },
@@ -1041,7 +1114,7 @@ async function loadAdminData() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  RENDER TABLE
+//  RENDER TABLE - MODIFICADO para mostrar textos completos
 // ═══════════════════════════════════════════════════════
 function renderTable(tbodyId, adminView) {
   const tbody = document.getElementById(tbodyId);
@@ -1078,6 +1151,7 @@ function buildRow(ev, adminView) {
   const plan = esc(ev.plan_accion||'');
   const obs  = esc(ev.observacion||'');
 
+  // Función helper para crear celdas con expansión
   const expandCell = (id, text, field) => {
     const short = trunc(text, 55);
     const isLong = (ev[field]||'').length > 55;
@@ -1094,11 +1168,21 @@ function buildRow(ev, adminView) {
       actions += `<button class="btn btn-outline btn-sm" style="cursor:not-allowed;opacity:.5" disabled><i class="fas fa-ban"></i></button>`;
     }
     if (ev.evidencia_url) {
-      actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver evidencia" onclick="viewEvidence('${esc(ev.evidencia_url)}')"><i class="fas fa-eye"></i></button>`;
+      const isEml = ev.evidencia_filename && ev.evidencia_filename.toLowerCase().endsWith('.eml');
+      if (isEml) {
+        actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver correo" onclick="viewEmlEvidence('${esc(ev.evidencia_url)}', '${esc(ev.evidencia_filename||'')}')"><i class="fas fa-envelope"></i></button>`;
+      } else {
+        actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver evidencia" onclick="viewEvidence('${esc(ev.evidencia_url)}')"><i class="fas fa-eye"></i></button>`;
+      }
     }
   } else {
     if (ev.evidencia_url) {
-      actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver" onclick="viewEvidence('${esc(ev.evidencia_url)}')"><i class="fas fa-eye"></i></button>`;
+      const isEml = ev.evidencia_filename && ev.evidencia_filename.toLowerCase().endsWith('.eml');
+      if (isEml) {
+        actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver correo" onclick="viewEmlEvidence('${esc(ev.evidencia_url)}', '${esc(ev.evidencia_filename||'')}')"><i class="fas fa-envelope"></i></button>`;
+      } else {
+        actions += `<button class="btn btn-success btn-sm btn-icon" title="Ver" onclick="viewEvidence('${esc(ev.evidencia_url)}')"><i class="fas fa-eye"></i></button>`;
+      }
       actions += `<button class="btn btn-info btn-sm btn-icon" title="Descargar" onclick="downloadEvidence('${ev.id}','${esc(ev.evidencia_filename||'')}')"><i class="fas fa-download"></i></button>`;
       actions += `<button class="btn btn-primary btn-sm btn-icon" title="Eliminar evidencia" onclick="deleteEvidence('${ev.id}')"><i class="fas fa-trash"></i></button>`;
     }
@@ -1120,28 +1204,6 @@ function buildRow(ev, adminView) {
     <td>${statusBadge}</td>
     <td><div class="actions-cell">${actions}</div></td>
   </tr>`;
-}
-
-function toggleCell(cellId, field, evId) {
-  const el = document.getElementById(cellId);
-  if (!el) return;
-  const ev = events.find(e => e.id == evId);
-  if (!ev) return;
-  if (el.classList.contains('expanded')) {
-    el.classList.remove('expanded');
-    el.textContent = trunc(ev[field]||'', 55);
-    const hint = el.nextElementSibling;
-    if (hint && hint.classList.contains('expand-hint')) {
-      hint.innerHTML = "<i class='fas fa-chevron-down' style='font-size:9px'></i> ver todo";
-    }
-  } else {
-    el.classList.add('expanded');
-    el.textContent = ev[field] || '—';
-    const hint = el.nextElementSibling;
-    if (hint && hint.classList.contains('expand-hint')) {
-      hint.innerHTML = "<i class='fas fa-chevron-up' style='font-size:9px'></i> colapsar";
-    }
-  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1244,6 +1306,9 @@ function bindUI() {
   document.getElementById('email-preview-btn')?.addEventListener('click', updateEmailPreview);
   document.getElementById('email-send-btn')?.addEventListener('click', sendEmail);
 
+  // EML download button
+  document.getElementById('eml-download-btn')?.addEventListener('click', downloadCurrentEml);
+
   // Close modals
   document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
   document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target===ov) closeModal(ov.id); }));
@@ -1285,7 +1350,6 @@ function openEventModal(id = null) {
   form.reset();
   document.getElementById('f-id').value = '';
   document.getElementById('event-notice').innerHTML = '';
-  // Remove date restrictions entirely so admin can enter any date
   document.getElementById('f-fecha').removeAttribute('min');
 
   if (id) {
@@ -1378,7 +1442,7 @@ async function saveObs() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  UPLOAD EVIDENCE
+//  UPLOAD EVIDENCE - MODIFICADO para soportar .eml
 // ═══════════════════════════════════════════════════════
 function openUpload(id) {
   document.getElementById('upload-event-id').value = id;
@@ -1397,7 +1461,16 @@ function setUploadFile(file) {
 
   const prev = document.getElementById('file-preview');
   const ext = file.name.split('.').pop().toUpperCase();
-  const icons = { PDF:'fa-file-pdf', JPG:'fa-file-image', JPEG:'fa-file-image', PNG:'fa-file-image', WEBP:'fa-file-image', DOC:'fa-file-word', DOCX:'fa-file-word' };
+  const icons = { 
+    PDF:'fa-file-pdf', 
+    JPG:'fa-file-image', 
+    JPEG:'fa-file-image', 
+    PNG:'fa-file-image', 
+    WEBP:'fa-file-image', 
+    DOC:'fa-file-word', 
+    DOCX:'fa-file-word',
+    EML:'fa-envelope'
+  };
   const icon = icons[ext] || 'fa-file';
   prev.innerHTML = `<div class="notice notice-info"><i class="fas ${icon}"></i> <strong>${file.name}</strong> · ${(file.size/1024).toFixed(1)} KB</div>`;
   prev.style.display='block';
@@ -1411,19 +1484,17 @@ async function doUpload() {
   if (!file) { setNotice('upload-notice','error','Seleccione un archivo'); return; }
   if (file.size > 5*1024*1024) { setNotice('upload-notice','error','El archivo supera 5 MB'); return; }
 
-  // Validate mime
-  const allowed=['application/pdf','image/jpeg','image/png','image/webp','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-  if (!allowed.includes(file.type) && file.type !== '') {
-    // allow if extension matches even if mime is off
-    const ext = file.name.split('.').pop().toLowerCase();
-    const okExts = ['pdf','jpg','jpeg','png','webp','doc','docx'];
-    if (!okExts.includes(ext)) { setNotice('upload-notice','error','Tipo de archivo no permitido'); return; }
+  // Validar extensiones permitidas
+  const ext = file.name.split('.').pop().toLowerCase();
+  const allowedExts = ['pdf','jpg','jpeg','png','webp','doc','docx','eml'];
+  if (!allowedExts.includes(ext)) { 
+    setNotice('upload-notice','error','Tipo de archivo no permitido'); 
+    return; 
   }
 
   const ev = events.find(e => e.id == id);
   if (!ev) { setNotice('upload-notice','error','Evento no encontrado'); return; }
 
-  const ext = file.name.split('.').pop();
   const fileName = `evidencia_${id}_${Date.now()}.${ext}`;
 
   setNotice('upload-notice','info','Subiendo archivo…');
@@ -1456,6 +1527,147 @@ async function doUpload() {
 
 function viewEvidence(url) { window.open(url, '_blank'); }
 
+// ═══════════════════════════════════════════════════════
+//  EML VIEWER - NUEVO
+// ═══════════════════════════════════════════════════════
+async function viewEmlEvidence(url, filename) {
+  currentEmlUrl = url;
+  openModal('eml-modal');
+  
+  const container = document.getElementById('eml-content');
+  container.innerHTML = '<div class="spinner" style="margin: 40px auto;"></div><p style="text-align:center;color:var(--text3);margin-top:10px">Cargando correo electrónico...</p>';
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Error al cargar el archivo');
+    
+    const text = await response.text();
+    const parsed = parseEmlContent(text);
+    
+    container.innerHTML = `
+      <div class="eml-header">
+        <div class="eml-header-row">
+          <span class="eml-header-label">De:</span>
+          <span class="eml-header-value">${esc(parsed.from || '—')}</span>
+        </div>
+        <div class="eml-header-row">
+          <span class="eml-header-label">Para:</span>
+          <span class="eml-header-value">${esc(parsed.to || '—')}</span>
+        </div>
+        ${parsed.cc ? `<div class="eml-header-row">
+          <span class="eml-header-label">CC:</span>
+          <span class="eml-header-value">${esc(parsed.cc)}</span>
+        </div>` : ''}
+        <div class="eml-header-row">
+          <span class="eml-header-label">Asunto:</span>
+          <span class="eml-header-value"><strong>${esc(parsed.subject || '(Sin asunto)')}</strong></span>
+        </div>
+        <div class="eml-header-row">
+          <span class="eml-header-label">Fecha:</span>
+          <span class="eml-header-value">${esc(parsed.date || '—')}</span>
+        </div>
+      </div>
+      <div class="eml-body">${esc(parsed.body || '(Sin contenido)')}</div>
+    `;
+  } catch(e) {
+    container.innerHTML = `
+      <div class="notice notice-error">
+        <i class="fas fa-exclamation-triangle"></i>
+        Error al cargar el correo: ${e.message}
+      </div>
+    `;
+  }
+}
+
+function parseEmlContent(emlText) {
+  const result = {
+    from: '',
+    to: '',
+    cc: '',
+    subject: '',
+    date: '',
+    body: ''
+  };
+
+  // Separar headers y body
+  const parts = emlText.split(/\r?\n\r?\n/);
+  const headers = parts[0];
+  const bodyParts = parts.slice(1);
+
+  // Parsear headers
+  const headerLines = headers.split(/\r?\n/);
+  let currentHeader = '';
+  
+  headerLines.forEach(line => {
+    if (line.match(/^[A-Za-z-]+:/)) {
+      currentHeader = line;
+    } else if (line.match(/^\s+/) && currentHeader) {
+      currentHeader += ' ' + line.trim();
+    } else {
+      processHeader(currentHeader);
+      currentHeader = line;
+    }
+  });
+  if (currentHeader) processHeader(currentHeader);
+
+  function processHeader(line) {
+    const match = line.match(/^([A-Za-z-]+):\s*(.+)$/);
+    if (!match) return;
+    
+    const [, name, value] = match;
+    const normalizedName = name.toLowerCase();
+    
+    if (normalizedName === 'from') result.from = cleanHeaderValue(value);
+    else if (normalizedName === 'to') result.to = cleanHeaderValue(value);
+    else if (normalizedName === 'cc') result.cc = cleanHeaderValue(value);
+    else if (normalizedName === 'subject') result.subject = decodeHeader(value);
+    else if (normalizedName === 'date') result.date = value.trim();
+  }
+
+  // Extraer el cuerpo del mensaje
+  let body = bodyParts.join('\n\n');
+  
+  // Si es multipart, intentar extraer la parte de texto
+  if (body.includes('Content-Type: text/plain')) {
+    const textMatch = body.match(/Content-Type: text\/plain[\s\S]*?\n\n([\s\S]*?)(?=\n--)/);
+    if (textMatch) {
+      body = textMatch[1];
+    }
+  }
+
+  // Limpiar el body
+  body = body.replace(/^Content-.*$/gm, '');
+  body = body.replace(/^--.*$/gm, '');
+  body = body.trim();
+
+  result.body = body;
+  return result;
+}
+
+function cleanHeaderValue(value) {
+  return value.replace(/<([^>]+)>/, '$1').trim();
+}
+
+function decodeHeader(value) {
+  // Decodificar headers codificados (básico)
+  if (value.includes('=?')) {
+    return value.replace(/=\?[^?]+\?[QB]\?([^?]+)\?=/gi, (match, encoded) => {
+      try {
+        return decodeURIComponent(escape(atob(encoded)));
+      } catch {
+        return encoded;
+      }
+    });
+  }
+  return value;
+}
+
+function downloadCurrentEml() {
+  if (currentEmlUrl) {
+    window.open(currentEmlUrl, '_blank');
+  }
+}
+
 async function downloadEvidence(id, filename) {
   try {
     const { data, error } = await sb.storage.from('evidencias').download(filename);
@@ -1474,20 +1686,6 @@ async function deleteEvidence(id) {
     await sb.from('eventos').update({ evidencia_url:null, evidencia_filename:null, ultima_actualizacion:new Date().toISOString() }).eq('id',id);
     await loadAdminData(); await loadPublicData();
   } catch(e) { alert('Error: '+e.message); }
-}
-
-// ═══════════════════════════════════════════════════════
-//  TEXT DETAIL MODAL
-// ═══════════════════════════════════════════════════════
-function openTextModal(id) {
-  const ev = events.find(e => e.id==id);
-  if (!ev) return;
-  document.getElementById('td-id').value    = ev.id;
-  document.getElementById('td-proceso').value = ev.proceso||'';
-  document.getElementById('td-desc').textContent = ev.descripcion_evento || '—';
-  document.getElementById('td-plan').textContent = ev.plan_accion || '—';
-  document.getElementById('td-obs').textContent  = ev.observacion || '—';
-  openModal('text-modal');
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1539,7 +1737,6 @@ function xlDownload() {
 
   const ws = XLSX.utils.json_to_sheet(rows);
 
-  // Column widths
   ws['!cols'] = [
     {wch:12},{wch:30},{wch:18},{wch:14},{wch:50},
     {wch:50},{wch:30},{wch:18},{wch:22},{wch:40},{wch:14},{wch:14}
@@ -1639,7 +1836,7 @@ function filterEmailEvents(type, today, t3) {
     if (type==='atrasados') return over;
     if (type==='proximos')  return near;
     if (type==='ambos')     return over||near;
-    return ev.estatus!=='cerrado' && !ev.evidencia_url; // todos
+    return ev.estatus!=='cerrado' && !ev.evidencia_url;
   });
 }
 
@@ -1711,13 +1908,8 @@ function fmtDate(ds) {
   return d.toLocaleDateString('es-MX');
 }
 
-function trunc(str, n) {
-  if (!str) return '';
-  return str.length<=n ? str : str.slice(0,n)+'…';
-}
-
 function esc(str) {
-  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 function getStatusText(s) {
@@ -1755,6 +1947,33 @@ function closeModal(id) {
 function renderBoth() {
   renderTable('pub-body', false);
   if (isAdmin) { renderTable('admin-body', true); updateStats(); updateChart(); }
+}
+
+function toggleCell(cellId, field, evId) {
+  const el = document.getElementById(cellId);
+  if (!el) return;
+  const ev = events.find(e => e.id == evId);
+  if (!ev) return;
+  if (el.classList.contains('expanded')) {
+    el.classList.remove('expanded');
+    el.textContent = trunc(ev[field]||'', 55);
+    const hint = el.nextElementSibling;
+    if (hint && hint.classList.contains('expand-hint')) {
+      hint.innerHTML = "<i class='fas fa-chevron-down' style='font-size:9px'></i> ver todo";
+    }
+  } else {
+    el.classList.add('expanded');
+    el.textContent = ev[field] || '—';
+    const hint = el.nextElementSibling;
+    if (hint && hint.classList.contains('expand-hint')) {
+      hint.innerHTML = "<i class='fas fa-chevron-up' style='font-size:9px'></i> colapsar";
+    }
+  }
+}
+
+function trunc(str, n) {
+  if (!str) return '';
+  return str.length<=n ? str : str.slice(0,n)+'…';
 }
 </script>
 </body>
