@@ -510,7 +510,7 @@ textarea.form-control { min-height: 90px; resize: vertical; }
   color: var(--red-dark); padding: 28px 0;
   border-bottom: 2px solid var(--red);
 }
-.hero-strip h1 { font: 700 26px var(--font); letter-spacing: -.5px; margin-bottom: 4px; color: var(--red-dark); }
+.hero-strip h1 { font: 700 30px var(--font); letter-spacing: -.5px; margin-bottom: 4px; color: var(--red-dark); }
 .hero-strip p { font: 400 14px var(--font); color: var(--red); opacity: .85; }
 
 /* ── DATE note ──────────────────────────── */
@@ -776,12 +776,29 @@ textarea.form-control { min-height: 90px; resize: vertical; }
             <label class="form-label">Área</label>
             <select id="f-area" class="form-control" required>
               <option value="">— Seleccionar —</option>
-              <option>INVENTARIOS</option><option>OPERACIONES</option><option>OMS</option>
-              <option>MANTENIMIENTO</option><option>SISTEMAS</option><option>CRYD</option>
-              <option>PFCT OPS</option><option>PFCT QA</option><option>IMPORTADOS QA</option>
-              <option>SGC</option><option>CUSTOMIZADO</option><option>CUSTOMIZADO QA</option><option>TRANSPORTE</option>
-              <option>PATIOS</option><option>HS&E</option><option>RH</option><option>CI</option>
-              <option>CHEP</option><option>ENTRENAMIENTO</option><option>CALIDAD</option>
+              <option>CALIDAD</option>
+<option>CHEP</option>
+<option>CONTROLES INTERNOS</option>
+<option>CRYD</option>
+<option>CUSTOMIZADO</option>
+<option>CUSTOMIZADO QA</option>
+<option>ENTRENAMIENTO</option>
+<option>HS&E</option>
+<option>IMPORTADOS QA</option>
+<option>INVENTARIOS</option>
+<option>MANTENIMIENTO</option>
+<option>OMS</option>
+<option>OPERACIONES</option>
+<option>OPERACIONES ESPECIALES</option>
+<option>P&G</option>
+<option>PATIOS</option>
+<option>PFCT OPS</option>
+<option>PFCT QA</option>
+<option>RH</option>
+<option>SISTEMA DE GESTIÓN DE CALIDAD</option>
+<option>SISTEMAS</option>
+<option>TRANSPORTE</option>
+
             </select>
           </div>
           <div class="form-group">
@@ -803,14 +820,24 @@ textarea.form-control { min-height: 90px; resize: vertical; }
             <label class="form-label">Responsable</label>
             <select id="f-responsable" class="form-control" required>
               <option value="">— Seleccionar —</option>
-              <option>German Fueyo Arce</option><option>Ignacio Cortez Acuña</option>
-              <option>Ricardo G. Abreo Ordoñez</option><option>Cinthya Arroyo Bravo</option>
-              <option>Edgar Olivo Gómez</option><option>Rogelio Garcia Soto</option>
-              <option>Félix Montoya Villafaña</option><option>Maria Luisa Reyes Balderas</option>
-              <option>Jorge Palacios Gonzalez</option><option>Evelin Hinojosa Fabila</option>
-              <option>Claudia Giovani Guerrero Velazquez</option><option>Veronica Jazmin Garcia Garcia</option>
-              <option>Omar Mendoza</option><option>Rogelio García</option> 
-              <option>Lizbeth Rangel</option> <option>Samantha Gonzalez</option> <option>Carlos Linares</option> 
+              <option>Reyes, María</option>
+<option>Rangel, Lizbeth</option>
+<option>Pineda, Dennis</option>
+<option>Montoya, Félix</option>
+<option>Mendoza, Omar</option>
+<option>Linares, Carlos</option>
+<option>Hinojosa, Evelin</option>
+<option>Guerrero, Claudia</option>
+<option>Gonzalez, Samantha</option>
+<option>García, Veronica</option>
+<option>García, Rogelio</option>
+<option>García, Juan</option>
+<option>Fueyo, German</option>
+<option>Cortez, Ignacio</option>
+<option>Castillo, Sergio</option>
+<option>Arroyo, Cinthya</option>
+<option>Abreo, Ricardo</option>
+<option>Araiza, Julio</option> 
             </select>
           </div>
           <div class="form-group">
@@ -921,25 +948,53 @@ textarea.form-control { min-height: 90px; resize: vertical; }
             <label class="form-label">Área</label>
             <select id="xl-area" class="form-control">
               <option value="">Todas las áreas</option>
-              <option>INVENTARIOS</option><option>OPERACIONES</option><option>OMS</option>
-              <option>MANTENIMIENTO</option><option>SISTEMAS</option><option>CRYD</option>
-              <option>PFCT OPS</option><option>PFCT QA</option><option>IMPORTADOS QA</option>
-              <option>SMO QA</option><option>CUSTOMIZADO</option><option>TRANSPORTE</option>
-              <option>PATIOS</option><option>HS&amp;E</option><option>RH</option><option>CI</option>
+              <option>CALIDAD</option>
+<option>CHEP</option>
+<option>CONTROLES INTERNOS</option>
+<option>CRYD</option>
+<option>CUSTOMIZADO</option>
+<option>CUSTOMIZADO QA</option>
+<option>ENTRENAMIENTO</option>
+<option>HS&E</option>
+<option>IMPORTADOS QA</option>
+<option>INVENTARIOS</option>
+<option>MANTENIMIENTO</option>
+<option>OMS</option>
+<option>OPERACIONES</option>
+<option>OPERACIONES ESPECIALES</option>
+<option>P&G</option>
+<option>PATIOS</option>
+<option>PFCT OPS</option>
+<option>PFCT QA</option>
+<option>RH</option>
+<option>SISTEMA DE GESTIÓN DE CALIDAD</option>
+<option>SISTEMAS</option>
+<option>TRANSPORTE</option>
+
             </select>
           </div>
           <div class="form-group">
             <label class="form-label">Responsable</label>
             <select id="xl-responsable" class="form-control">
                <option value="">— Seleccionar —</option>
-              <option>German Fueyo Arce</option><option>Ignacio Cortez Acuña</option>
-              <option>Ricardo G. Abreo Ordoñez</option><option>Cinthya Arroyo Bravo</option>
-              <option>Edgar Olivo Gómez</option><option>Rogelio Garcia Soto</option>
-              <option>Félix Montoya Villafaña</option><option>Maria Luisa Reyes Balderas</option>
-              <option>Jorge Palacios Gonzalez</option><option>Evelin Hinojosa Fabila</option>
-              <option>Claudia Giovani Guerrero Velazquez</option><option>Veronica Jazmin Garcia Garcia</option>
-              <option>Omar Mendoza</option><option>Rogelio García</option> 
-              <option>Lizbeth Rangel</option><option>Samantha Gonzalez</option> <option>Carlos Linares</option> 
+              <option>Reyes, María</option>
+<option>Rangel, Lizbeth</option>
+<option>Pineda, Dennis</option>
+<option>Montoya, Félix</option>
+<option>Mendoza, Omar</option>
+<option>Linares, Carlos</option>
+<option>Hinojosa, Evelin</option>
+<option>Guerrero, Claudia</option>
+<option>Gonzalez, Samantha</option>
+<option>García, Veronica</option>
+<option>García, Rogelio</option>
+<option>García, Juan</option>
+<option>Fueyo, German</option>
+<option>Cortez, Ignacio</option>
+<option>Castillo, Sergio</option>
+<option>Arroyo, Cinthya</option>
+<option>Abreo, Ricardo</option>
+<option>Araiza, Julio</option>
             </select>
           </div>
           <div class="form-group">
@@ -1054,22 +1109,22 @@ let sb = null, events = [], isAdmin = false, chartInst = null, currentFilter = '
 let currentEmlUrl = null; // Para almacenar URL del .eml que se está visualizando
 
 const RECIPIENTS = [
-  { id:1,  name:'German Fueyo Arce',                    email:'GERMAN FUEYO ARCE (DHL Supply Chain) <german.fueyoarce@dhl.com>' },
-  { id:2,  name:'Ignacio Cortez Acuña',                 email:'CortezAcuna, Ignacio [Non-PG] <cortezacuna.i@pg.com>' },
-  { id:3,  name:'Ricardo G. Abreo Ordoñez',             email:'Ricardo G. Abreo Ordoñez (DHL Supply Chain) <Ricardo.A.Ordonez@dhl.com>' },
-  { id:4,  name:'Cinthya Arroyo Bravo',                 email:'ARROYOBRAVO, CINTHYA [Non-PG] <arroyobravo.ac@pg.com>' },
-  { id:5,  name:'Edgar Olivo Gómez',                    email:'OlivoGomez, EdgarManuel [Non-PG] <olivogomez.em@pg.com>' },
-  { id:6,  name:'Rogelio Garcia Soto',                  email:'garcia, Rogelio [Non-PG] <garcia.ro.4@pg.com>' },
-  { id:7,  name:'Félix Montoya Villafaña',              email:'MontoyaVallarta, Felix [Non-PG] <montoyavallarta.fe@pg.com>;' },
-  { id:8,  name:'Maria Luisa Reyes Balderas',           email:'Maria Luisa Reyes Balderas (DHL Supply Chain) <maria.reyesb@dhl.com>' },
-  { id:9,  name:'Jorge Palacios Gonzalez',              email:'Palaciosgonzalez, Jorge [Non-PG] <palaciosgonzalez.jo@pg.com>' },
-  { id:10, name:'Evelin Hinojosa Fabila',               email:'Evelin Hinojosa Fabila (DHL Supply Chain) <Evelin.HinojosaF@dhl.com>' },
-  { id:11, name:'Claudia Giovani Guerrero Velazquez',   email:'Claudia Giovani Guerrero Velazquez (DHL Supply Chain) <ClaudiaGiovani.Guerrerov@dhl.com>' },
-  { id:12, name:'Veronica Jazmin Garcia Garcia',        email:'GarciaGarcia, VeronicaJazmin <garciagarcia.vj@pg.com>' },
-  { id:13, name:'Omar Mendoza',                         email:'Omar Mendoza Ibarra (DHL Supply Chain) <Omar.MendozaI@dhl.com>' },
-  { id:14, name:'Lizbeth Rangel',                       email:'Lizbeth Rangel Rodriguez (DHL Supply Chain) <Lizbeth.Rangel@dhl.com>' },
-  { id:15, name:'Samantha Gonzalez',                    email:'gonzalezfuentes.sa@pg.com' }, 
-  { id:16, name:'Carlos Linares',                       email:'linareslopez.cs@pg.com' }
+  { id:1,  name:'Reyes, María',                         email:'maria.reyesb@dhl.com' },
+  { id:2,  name:'Rangel, Lizbeth',                      email:'lizbeth.rangel@dhl.com' },
+  { id:3,  name:'Pineda, Dennis',                       email:'dennis.pinedar@dhl.com' },
+  { id:4,  name:'Montoya, Félix',                       email:'montoyavallarta.fe@pg.com' },
+  { id:5,  name:'Mendoza, Omar',                        email:'omar.mendozai@dhl.com' },
+  { id:6,  name:'Linares, Carlos',                      email:'linareslopez.cs@pg.com' },
+  { id:7,  name:'Hinojosa, Evelin',                     email:'evelin.hinojosaf@dhl.com' },
+  { id:8,  name:'Guerrero, Claudia',                    email:'claudiagiovani.guerrerov@dhl.com' },
+  { id:9,  name:'Gonzalez, Samantha',                   email:'gonzalezfuentes.sa@pg.com' },
+  { id:10, name:'García, Veronica',                     email:'garciagarcia.vj@pg.com' },
+  { id:11, name:'García, Juan Carlos',                  email:'garciacar.jc@pg.com' },
+  { id:12, name:'Fueyo, German',                        email:'german.fueyoarce@dhl.com' },
+  { id:13, name:'Cortez, Ignacio',                      email:'cortezacuna.i@pg.com' },
+  { id:14, name:'Castillo, Sergio',                     email:'castillorodriguez.s@pg.com' },
+  { id:15, name:'Arroyo, Cinthya',                      email:'arroyobravo.ac@pg.com' }, 
+  { id:16, name:'Abreo, Ricardo',                       email:'ricardo.a.ordonez@dhl.com' }
 ];
 
 // ═══════════════════════════════════════════════════════
