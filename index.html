@@ -1907,7 +1907,7 @@ function sendEmail() {
   if (!filtered.length) { showEmailStatus('No hay eventos para el filtro seleccionado.', 'warning'); return; }
 
   const to = sel.map(c=>c.dataset.email).join(',');
-  const subj = `Master Plan · Reporte ${today.toLocaleDateString('es-MX')}`;
+  const subj = `Minuta semanal: Master Plan · Corte ${today.toLocaleDateString('es-MX')}`;
 
   const atrasados = filtered.filter(ev=>new Date(ev.fecha_compromiso)<today);
   const proximos  = filtered.filter(ev=>{ const d=new Date(ev.fecha_compromiso); return d>=today&&d<=t3; });
