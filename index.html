@@ -579,7 +579,7 @@ textarea.form-control { min-height: 90px; resize: vertical; }
           </tr>
         </thead>
         <tbody id="pub-body">
-          <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
+          <tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>
         </tbody>
       </table>
     </div>
@@ -672,7 +672,7 @@ textarea.form-control { min-height: 90px; resize: vertical; }
           </tr>
         </thead>
         <tbody id="admin-body">
-          <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
+          <tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>
         </tbody>
       </table>
     </div>
@@ -1197,7 +1197,7 @@ function renderTable(tbodyId, adminView) {
   });
 
   if (!filtered.length) {
-    tbody.innerHTML = `<tr class="state-row"><td colspan="12" style="color:var(--text3)"><i class="fas fa-inbox" style="font-size:22px;margin-bottom:8px;display:block"></i>Sin eventos para mostrar</td></tr>`;
+    tbody.innerHTML = `<tr class="state-row"><td colspan="13" style="color:var(--text3)"><i class="fas fa-inbox" style="font-size:22px;margin-bottom:8px;display:block"></i>Sin eventos para mostrar</td></tr>`;
     return;
   }
 
@@ -2102,20 +2102,59 @@ function sendEmail() {
   if (!sel.length) { showEmailStatus('Selecciona al menos un destinatario.', 'warning'); return; }
   if (!filtered.length) { showEmailStatus('No hay eventos para el filtro seleccionado.', 'warning'); return; }
 
-  const to = sel.map(c=>c.dataset.email).join(',');
+  const to = sel.map(c=>c.dataset.email).join(';');
   const subj = `Minuta semanal: Master Plan · Corte ${today.toLocaleDateString('es-MX')}`;
 
   const atrasados = filtered.filter(ev=>new Date(ev.fecha_compromiso)<today);
   const proximos  = filtered.filter(ev=>{ const d=new Date(ev.fecha_compromiso); return d>=today&&d<=t3; });
 
-  const body = `Estimado equipo,\n\nSe detectaron los siguientes eventos que requieren atención:\n\nTotal: ${filtered.length} | Atrasados: ${atrasados.length} | Próximos: ${proximos.length}\n\n${filtered.map((ev,i)=>{
-    const d=new Date(ev.fecha_compromiso); const over=d<today; const near=d>=today&&d<=t3;
-    return `${i+1}. ${over?'[ATRASADO] ':near?'[PRÓXIMO] ':''}${ev.id} | ${ev.proceso||'—'} | ${ev.area||'—'} | ${ev.responsable||'—'} | ${fmtDate(ev.fecha_compromiso)}`;
-  }).join('\n')}\n\nAcceder al sistema: ${window.location.origin||'https://ittsl16.github.io/Master-Plan/'}\n\n—\nSistema Master Plan (correo automático)`;
+// 🔥 Construir cuerpo del correo correctamente
+let body = `
+Resumen de eventos
 
-  window.open(`mailto:${to}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`, '_blank');
-  showEmailStatus(`✔ Correo preparado con ${filtered.length} evento(s) para ${sel.length} destinatario(s). Se abrió su cliente de correo.`, 'success');
+Total: ${filtered.length}
+Atrasados: ${atrasados.length}
+Próximos: ${proximos.length}
+
+-----------------------------------------
+`;
+
+filtered.forEach(ev => {
+  const d = new Date(ev.fecha_compromiso);
+  const estado = d < today ? 'ATRASADO' : 'ACTIVO';
+
+  body += `
+ID: ${ev.id}
+Proceso: ${ev.proceso || '-'}
+Área: ${ev.area || '-'}
+Responsable: ${ev.responsable || '-'}
+Fecha: ${fmtDate(ev.fecha_compromiso)}
+Estatus: ${estado}
+
+-----------------------------------------
+`;
+});
+
+body += `
+Acceder al sistema:
+${window.location.origin || 'https://ittsl16.github.io/Master-Plan/'}
+
+—
+Sistema Master Plan
+`;
+
+// 🔥 Abrir correo
+
+window.open(`mailto:${to}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`, '_blank');
+
+// ✅ Mensaje
+showEmailStatus('Correo preparado para enviar.', 'success');
 }
+
+
+// ✅ Mensaje
+
+
 
 function showEmailStatus(msg, type) {
   const el = document.getElementById('email-send-status');
@@ -2179,12 +2218,12 @@ function getStatusText(s) {
 
 function setBodyLoading(id) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>`;
+  if (el) el.innerHTML = `<tr class="state-row"><td colspan="13"><div class="spinner"></div>Cargando eventos…</td></tr>`;
 }
 
 function setBodyError(id, msg) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<tr class="state-row"><td colspan="12" style="color:#C62828"><i class="fas fa-exclamation-triangle" style="font-size:22px;display:block;margin-bottom:8px"></i>${msg}</td></tr>`;
+  if (el) el.innerHTML = `<tr class="state-row"><td colspan="13" style="color:#C62828"><i class="fas fa-exclamation-triangle" style="font-size:22px;display:block;margin-bottom:8px"></i>${msg}</td></tr>`;
 }
 
 function setNotice(id, type, msg) {
