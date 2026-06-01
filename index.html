@@ -1286,25 +1286,55 @@ function buildRow(ev, adminView) {
 }
 
 function buildEffectivenessCell(ev, adminView) {
+
   let html = '';
+
+  // ✅ Calcular fecha validación
+  const fechaVal = calcFechaValidacion(ev.fecha_compromiso);
+  const fechaTxt = fechaVal ? fmtDate(fechaVal) : '—';
+
+  const hoy = new Date();
+  const vencido = fechaVal && fechaVal < hoy;
+
+  // 🔹 CONTENEDOR GENERAL
+  html += `<div style="display:flex;flex-direction:column;gap:6px">`;
+
+  // ✅ FECHA (YA NO SE CONFUNDE)
+  html += `
+    <div style="
+      font-size:11px;
+      padding:3px 6px;
+      border-radius:4px;
+      background:${vencido ? '#FDECEA' : 'var(--gold-pale)'};
+      border:1px solid var(--border);
+      color:${vencido ? '#C62828' : 'var(--text)'};
+    ">
+      <i class="fas fa-calendar"></i>
+      Validar: <strong>${fechaTxt}</strong>
+      ${vencido ? ' ⚠️' : ''}
+    </div>
+  `;
+
+  // ✅ BOTONES SEPARADOS (SOLUCIONA TU PROBLEMA)
+  html += `<div style="display:flex;gap:6px;flex-wrap:wrap">`;
 
   if (ev.efectividad_url) {
 
     html += `
       <button class="btn btn-success btn-xs"
         onclick="viewEvidence('${ev.efectividad_url}')">
-        <i class="fas fa-eye"></i> Ver evidencia
+        <i class="fas fa-eye"></i>
       </button>
     `;
 
     if (adminView) {
       html += `
-        <button class="btn btn-info btn-xs btn-icon"
+        <button class="btn btn-info btn-xs"
           onclick="downloadEffectiveness('${ev.id}','${ev.efectividad_filename || ''}')">
           <i class="fas fa-download"></i>
         </button>
 
-        <button class="btn btn-warning btn-xs btn-icon"
+        <button class="btn btn-warning btn-xs"
           onclick="deleteEffectiveness('${ev.id}')">
           <i class="fas fa-trash"></i>
         </button>
@@ -1315,6 +1345,7 @@ function buildEffectivenessCell(ev, adminView) {
 
     html += `
       <button class="btn btn-outline btn-xs"
+        style="margin-top:2px"
         onclick="openUploadEffectiveness('${ev.id}')">
         <i class="fas fa-upload"></i> Subir
       </button>
@@ -1322,7 +1353,9 @@ function buildEffectivenessCell(ev, adminView) {
 
   }
 
-  return `<div class="actions-cell">${html}</div>`;
+  html += `</div></div>`;
+
+  return html;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1664,6 +1697,7 @@ if (window.isUploadingEffectiveness) {
 
     setNotice('upload-notice','success','¡Evidencia subida correctamente!');
     setTimeout(async () => { closeModal('upload-modal'); await loadPublicData(); if(isAdmin) await loadAdminData(); }, 1800);
+    window.isUploadingEffectiveness = false;
   } catch(e) {
     setNotice('upload-notice','error', e.message);
   } finally { document.getElementById('upload-submit').disabled = false; }
@@ -2117,6 +2151,15 @@ function criticHTML(c) {
   const map = { Mayor:'mayor', Menor:'menor', Critica:'critica', 'Observación':'observacion', Observacion:'observacion' };
   const cls = map[c] || 'menor';
   return `<span class="badge badge-${cls}">${c}</span>`;
+}
+
+function calcFechaValidacion(fechaCompromiso) {
+  if (!fechaCompromiso) return null;
+
+  const d = new Date(fechaCompromiso);
+  d.setDate(d.getDate() + 90);
+
+  return d;
 }
 
 function fmtDate(ds) {
