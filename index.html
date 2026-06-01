@@ -572,11 +572,14 @@ textarea.form-control { min-height: 90px; resize: vertical; }
             <th class="col-date">Actualización</th>
             <th>Observación</th>
             <th class="col-status">Estatus</th>
-            <th class="col-actions">Acciones</th>
+            
+<th class="col-actions">Acciones</th>
+<th>Chequeo de efectividad</th>
+
           </tr>
         </thead>
         <tbody id="pub-body">
-          <tr class="state-row"><td colspan="12"><div class="spinner"></div>Cargando eventos…</td></tr>
+          <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
         </tbody>
       </table>
     </div>
@@ -662,11 +665,14 @@ textarea.form-control { min-height: 90px; resize: vertical; }
             <th class="col-date">Actualización</th>
             <th>Observación</th>
             <th class="col-status">Estatus</th>
-            <th class="col-actions">Acciones</th>
+            
+<th class="col-actions">Acciones</th>
+<th>Chequeo de efectividad</th>
+
           </tr>
         </thead>
         <tbody id="admin-body">
-          <tr class="state-row"><td colspan="12"><div class="spinner"></div>Cargando eventos…</td></tr>
+          <tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>
         </tbody>
       </table>
     </div>
@@ -1207,6 +1213,8 @@ function buildRow(ev, adminView) {
   const plan = esc(ev.plan_accion||'');
   const obs  = esc(ev.observacion||'');
 
+  
+
   // Función helper para crear celdas con expansión
   const expandCell = (id, text, field) => {
     const short = trunc(text, 55);
@@ -1215,6 +1223,8 @@ function buildRow(ev, adminView) {
     return `<span class="cell-text" id="${cellId}" title="${isLong?'':''+text}">${short}</span>${isLong?`<span class="expand-hint" onclick="toggleCell('${cellId}','${field}','${id}')"><i class='fas fa-chevron-down' style='font-size:9px'></i> ver todo</span>`:''}`;
   };
 
+
+  
   let actions = '';
   if (!adminView) {
     if ((status==='atrasado'||status==='en_proceso') && !ev.evidencia_url) {
@@ -1257,9 +1267,62 @@ function buildRow(ev, adminView) {
     <td><span style="font:500 12px var(--mono)">${fmtDate(ev.fecha_compromiso)}</span></td>
     <td><span style="font:400 12px var(--mono);color:var(--text3)">${fmtDate(ev.ultima_actualizacion)}</span></td>
     <td>${expandCell(ev.id, obs, 'observacion')}</td>
-    <td>${statusBadge}</td>
-    <td><div class="actions-cell">${actions}</div></td>
+    
+<td>${statusBadge}</td>
+
+<!-- Evidencia -->
+<td>
+  <div class="actions-cell">
+    ${actions}
+  </div>
+</td>
+
+<!-- Chequeo de efectividad -->
+<td>
+  ${buildEffectivenessCell(ev, adminView)}
+</td>
+
   </tr>`;
+}
+
+function buildEffectivenessCell(ev, adminView) {
+  let html = '';
+
+  if (ev.efectividad_url) {
+
+    html += `
+      <button class="btn btn-success btn-xs"
+        onclick="viewEvidence('${ev.efectividad_url}')">
+        <i class="fas fa-eye"></i> Ver evidencia
+      </button>
+    `;
+
+    if (adminView) {
+      html += `
+        <button class="btn btn-info btn-xs btn-icon"
+          onclick="downloadEffectiveness('${ev.id}','${ev.efectividad_filename || ''}')">
+          <i class="fas fa-download"></i>
+        </button>
+
+        <button class="btn btn-warning btn-xs btn-icon"
+          onclick="deleteEffectiveness('${ev.id}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      `;
+    }
+
+  } else {
+
+    html += `
+      <button class="btn btn-outline btn-xs"
+        onclick="openUploadEffectiveness('${ev.id}')">
+        <i class="fas fa-upload"></i> Subir
+      </button>
+    `;
+
+  }
+
+  return `<div class="actions-cell">${html}</div>`;
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1509,6 +1572,21 @@ function openUpload(id) {
   openModal('upload-modal');
 }
 
+function openUploadEffectiveness(id) {
+
+  document.getElementById('upload-event-id').value = id;
+  document.getElementById('evidence-file').value = '';
+  document.getElementById('file-preview').style.display = 'none';
+  document.getElementById('file-preview').innerHTML = '';
+  document.getElementById('upload-notice').innerHTML = '';
+
+  // 🔥 MARCAMOS QUE ES EFECTIVIDAD
+  window.isUploadingEffectiveness = true;
+
+  openModal('upload-modal');
+}
+
+
 function setUploadFile(file) {
   const inp = document.getElementById('evidence-file');
   const dt = new DataTransfer();
@@ -1562,14 +1640,24 @@ async function doUpload() {
 
     const { data: urlData } = sb.storage.from('evidencias').getPublicUrl(fileName);
 
-    const updPayload = {
-      evidencia_url: urlData.publicUrl,
-      evidencia_filename: fileName,
-      ultima_actualizacion: new Date().toISOString()
-    };
-    if (ev.estatus === 'atrasado' || ev.estatus === 'en_proceso') {
-      updPayload.estatus = 'cerrado';
-    }
+    let updPayload = {
+  ultima_actualizacion: new Date().toISOString()
+};
+
+if (window.isUploadingEffectiveness) {
+
+  updPayload.efectividad_url = urlData.publicUrl;
+  updPayload.efectividad_filename = fileName;
+
+} else {
+
+  updPayload.evidencia_url = urlData.publicUrl;
+  updPayload.evidencia_filename = fileName;
+
+  if (ev.estatus === 'atrasado' || ev.estatus === 'en_proceso') {
+    updPayload.estatus = 'cerrado';
+  }
+}
 
     const { error: updErr } = await sb.from('eventos').update(updPayload).eq('id', id);
     if (updErr) throw updErr;
@@ -1735,13 +1823,87 @@ async function downloadEvidence(id, filename) {
 }
 
 async function deleteEvidence(id) {
-  if (!confirm('¿Eliminar evidencia? El responsable deberá volver a subirla.')) return;
-  const ev = events.find(e => e.id==id);
+  if (!confirm('¿Eliminar evidencia?')) return;
+
+  const ev = events.find(e => e.id == id);
+
   try {
-    if (ev?.evidencia_filename) await sb.storage.from('evidencias').remove([ev.evidencia_filename]);
-    await sb.from('eventos').update({ evidencia_url:null, evidencia_filename:null, ultima_actualizacion:new Date().toISOString() }).eq('id',id);
-    await loadAdminData(); await loadPublicData();
-  } catch(e) { alert('Error: '+e.message); }
+
+    if (ev?.evidencia_filename) {
+
+      console.log("Eliminando archivo:", ev.evidencia_filename);
+
+      const { error: storageError } = await sb
+        .storage
+        .from('evidencias')
+        .remove([ev.evidencia_filename]);
+
+      if (storageError) {
+        console.warn("Error storage:", storageError.message);
+      }
+    }
+
+    const { error: dbError } = await sb
+      .from('eventos')
+      .update({
+        evidencia_url: null,
+        evidencia_filename: null,
+        ultima_actualizacion: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (dbError) throw dbError;
+
+    await loadAdminData();
+    await loadPublicData();
+
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function deleteEffectiveness(id) {
+
+  if (!confirm('¿Eliminar evidencia de efectividad?')) return;
+
+  const ev = events.find(e => e.id == id);
+
+  try {
+
+    // 🔥 1. Eliminar archivo del storage
+    if (ev?.efectividad_filename) {
+
+      console.log("Eliminando efectividad:", ev.efectividad_filename);
+
+      const { error: storageError } = await sb
+        .storage
+        .from('evidencias')
+        .remove([ev.efectividad_filename]);
+
+      if (storageError) {
+        console.warn("Error storage:", storageError.message);
+      }
+    }
+
+    // 🔥 2. Limpiar campos en BD
+    const { error: dbError } = await sb
+      .from('eventos')
+      .update({
+        efectividad_url: null,
+        efectividad_filename: null,
+        ultima_actualizacion: new Date().toISOString()
+      })
+      .eq('id', id);
+
+    if (dbError) throw dbError;
+
+    // 🔥 3. Recargar tabla
+    await loadAdminData();
+    await loadPublicData();
+
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1974,7 +2136,7 @@ function getStatusText(s) {
 
 function setBodyLoading(id) {
   const el = document.getElementById(id);
-  if (el) el.innerHTML = `<tr class="state-row"><td colspan="12"><div class="spinner"></div>Cargando eventos…</td></tr>`;
+  if (el) el.innerHTML = `<tr class="state-row"><td colspan="14"><div class="spinner"></div>Cargando eventos…</td></tr>`;
 }
 
 function setBodyError(id, msg) {
