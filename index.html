@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
@@ -50,14 +51,16 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: var(--font);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.55;
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
+
+body{
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  color: #1A1A1A;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF4C2 100%);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFF4C2 100%);
 }
+
+  
 
 /* ── SCROLLBAR ─────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -122,6 +125,7 @@ body {
   transition: var(--transition); display: flex; align-items: center; gap: 6px;
 }
 .btn-logout:hover { background: var(--red-dark); }
+
 
 /* ── CONTAINER ─────────────────────────────── */
 .container { max-width: 1520px; margin: 0 auto; padding: 0 24px; }
@@ -217,27 +221,62 @@ body {
 .btn-icon { padding: 6px 8px; }
 
 /* ── TABLE ─────────────────────────────────── */
+
 .table-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden;
   box-shadow: var(--shadow-sm); margin-bottom: 24px;
   overflow-x: auto;
 }
 table { width: 100%; border-collapse: collapse; min-width: 1300px; }
-thead { background: linear-gradient(to bottom, var(--gold-light), var(--gold-mid)); }
+
+thead { 
+  background: #FFF3B0;
+}
+
 th {
-  padding: 12px 14px; font: 700 11px var(--font);
+  padding: 12px 14px; font: 700 10px var(--font);
   text-transform: uppercase; letter-spacing: .6px;
   color: var(--red-dark); border-bottom: 2px solid var(--red);
   white-space: nowrap; text-align: left; position: sticky; top: 0;
 }
-td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border); 
+  vertical-align: middle; 
+}
+
+tbody tr {
+  height: 58px; /
+}
 tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background: var(--gold-mid); }
+tbody tr {
+  transition: all .15s ease;
+}
+
+tbody tr:hover { 
+  background: #FFF7CC; 
+  transform: scale(1.002);
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+
+tbody tr {
+  border-left: 3px solid transparent;
+}
+
 .col-id { width: 80px; }
 .col-area { width: 120px; }
 .col-critic { width: 100px; }
-.col-status { width: 110px; }
+
+.col-status { 
+  width: 140px; 
+  text-align: center;
+}
+
 .col-date { width: 110px; white-space: nowrap; }
 .col-actions { width: 160px; }
 .id-badge {
@@ -248,23 +287,50 @@ tbody tr:hover { background: var(--gold-mid); }
 
 /* ── STATUS BADGES ──────────────────────────── */
 .badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 10px; border-radius: 20px;
-  font: 600 11px var(--font); white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font: 600 11px var(--font);
+  min-width: 90px;
 }
-.badge-cerrado { background: #1E7E34; color:#ffffff; }
-.badge-atrasado { background: #d41b06; color: #ffffff; }
-.badge-proceso { background: var(--orange-bg); color: var(--orange); }
-.badge-tbd { background: var(--blue-bg); color: var(--blue); }
+
+.badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.badge-cerrado { background: #E8F5E9; color:#1E7E34; }
+.badge-atrasado { background: #FDECEA; color: #C62828; }
+.badge-proceso { background: #FFF3E0; color: #E06000; }
+.badge-tbd { background: #E3EEF9; color: #1565C0; }
 .badge-mayor { background: #eb660e; color: #ffffff; }
 .badge-menor { background: #dce5f5; color: #6B7280; }
 .badge-critica { background: #d41b06; color: #ffffff; }
 .badge-observacion { background: var(--blue-bg); color: var(--blue); }
-.badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .7; }
 
 /* ── CELL TEXT — con truncamiento y expansión ─────────────────── */
 .cell-text {
-  display: block; font-size: 13px; color: var(--text);
+  .cell-text {
+  display: block;
+  font-size: 12px;
+  color: var(--text);
+  max-width: 180px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+td:nth-child(7) {
+  font-weight: 600;
+}
+
+
   max-width: 180px;
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
   cursor: pointer; transition: var(--transition);
@@ -295,7 +361,19 @@ tbody tr:hover { background: var(--gold-mid); }
 }
 
 /* ── ACTION ROW ─────────────────────────────── */
-.actions-cell { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.actions-cell {
+  display: flex; 
+  gap: 6px; 
+  flex-wrap: nowrap;
+  align-items: center; 
+}
+
+.actions-cell .btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  justify-content: center;
+}
 
 /* ── LOADING / EMPTY ────────────────────────── */
 .state-row td {
@@ -515,6 +593,91 @@ textarea.form-control { min-height: 90px; resize: vertical; }
 
 /* ── DATE note ──────────────────────────── */
 .date-note { font: 400 11px var(--font); color: var(--text3); margin-top: 4px; }
+
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+
+.card{
+  background:#fff;
+  border-radius:16px;
+  margin-bottom:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  overflow:hidden;
+}
+
+
+.card-head{
+  padding:12px 16px;
+  background: linear-gradient(180deg, #FFFCEC, #FFFFFF);
+  border-bottom:1px solid #E5E5E5;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.card-body{
+  padding:16px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#CF002E;
+}
+
+.filtros-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+  gap:10px;
+}
+
+.field label{
+  font-size:11px;
+  font-weight:700;
+}
+
+.kpis{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.kpi{
+  background:#fff;
+  border-radius:14px;
+  padding:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
+
+.kpi .value{
+  font-size:26px;
+  font-weight:700;
+}
+
+.charts{
+  display:grid;
+  grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+  gap:16px;
+}
+
+.chart-card{
+  background:#fff;
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+}
+
+.chart-wrap{
+  height:300px;
+}
+
 </style>
 </head>
 <body>
@@ -598,38 +761,7 @@ textarea.form-control { min-height: 90px; resize: vertical; }
   </header>
 
   <div class="container">
-    <div class="stats-row">
-      <div class="stat-card total">
-        <i class="fas fa-clipboard-list stat-icon"></i>
-        <div class="stat-label">Total eventos</div>
-        <div class="stat-value" id="s-total">0</div>
-      </div>
-      <div class="stat-card atrasado">
-        <i class="fas fa-exclamation-triangle stat-icon"></i>
-        <div class="stat-label">Atrasados</div>
-        <div class="stat-value" id="s-atrasado">0</div>
-        <div class="stat-pct" id="s-atrasado-pct">—</div>
-      </div>
-      <div class="stat-card proceso">
-        <i class="fas fa-spinner stat-icon"></i>
-        <div class="stat-label">En proceso</div>
-        <div class="stat-value" id="s-proceso">0</div>
-        <div class="stat-pct" id="s-proceso-pct">—</div>
-      </div>
-      <div class="stat-card cerrado">
-        <i class="fas fa-check-circle stat-icon"></i>
-        <div class="stat-label">Cerrados</div>
-        <div class="stat-value" id="s-cerrado">0</div>
-        <div class="stat-pct" id="s-cerrado-pct">—</div>
-      </div>
-      <div class="stat-card tbd">
-        <i class="fas fa-question-circle stat-icon"></i>
-        <div class="stat-label">TBD</div>
-        <div class="stat-value" id="s-tbd">0</div>
-        <div class="stat-pct" id="s-tbd-pct">—</div>
-      </div>
-    </div>
-
+      
     <!-- Admin Toolbar -->
     <div class="toolbar" style="margin-top:16px">
       <div class="search-wrap">
@@ -647,6 +779,9 @@ textarea.form-control { min-height: 90px; resize: vertical; }
         <button id="add-event-btn" class="btn btn-success"><i class="fas fa-plus"></i> Nuevo evento</button>
         <button id="export-excel-btn" class="btn btn-gold"><i class="fas fa-file-excel"></i> Exportar Excel</button>
         <button id="send-email-btn" class="btn btn-purple"><i class="fas fa-paper-plane"></i> Enviar alertas</button>
+        <button id="open-dashboard-btn" class="btn btn-info">
+  <i class="fas fa-chart-bar"></i> Dashboard
+</button>
       </div>
     </div>
 
@@ -677,14 +812,152 @@ textarea.form-control { min-height: 90px; resize: vertical; }
       </table>
     </div>
 
-    <div class="chart-card">
-      <div class="chart-title"><i class="fas fa-chart-pie" style="color:var(--red);margin-right:8px"></i>Distribución por estatus</div>
-      <canvas id="status-chart"></canvas>
-    </div>
   </div>
 </div>
 
 <!-- ==================== MODALS ==================== -->
+
+<!-- ==================== DASHBOARD PANEL ==================== -->
+<div id="dashboard-panel" style="display:none">
+
+  <header class="admin-topbar">
+    <div class="inner">
+      <div class="brand-icon"><i class="fas fa-chart-bar"></i></div>
+      <span style="font:700 16px var(--font);color:var(--red-dark)">
+        Dashboard Master Plan
+      </span>
+
+      <button id="back-dashboard-btn" class="btn-logout">
+        <i class="fas fa-arrow-left"></i> Volver
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+  <!-- FILTROS -->
+  <div class="card">
+    <div class="card-head">
+      <div class="dot"></div>
+      <h3>Filtros</h3>
+    </div>
+
+    <div class="card-body">
+      <div class="filtros-grid">
+
+        <div class="field">
+          <label>Área</label>
+          <input id="dash-area" class="form-control" placeholder="Escribe área..." list="areas-list">
+
+          <datalist id="areas-list"></datalist>
+        </div>
+
+        <div class="field">
+          <label>Responsable</label>
+          <input id="dash-resp" class="form-control" placeholder="Escribe responsable..." list="resp-list">
+          <datalist id="resp-list"></datalist>
+        </div>
+
+        <div class="field">
+          <label>Estatus</label>
+          <select id="dash-status" class="form-control">
+            <option value="">Todos</option>
+            <option value="atrasado">Atrasado</option>
+            <option value="en_proceso">En Proceso</option>
+            <option value="cerrado">Cerrado</option>
+            <option value="tbd">TBD</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Mes</label>
+          <select id="dash-month" class="form-control">
+            <option value="">Todos</option>
+            <option value="0">Enero</option>
+            <option value="1">Febrero</option>
+            <option value="2">Marzo</option>
+            <option value="3">Abril</option>
+            <option value="4">Mayo</option>
+            <option value="5">Junio</option>
+            <option value="6">Julio</option>
+            <option value="7">Agosto</option>
+            <option value="8">Septiembre</option>
+            <option value="9">Octubre</option>
+            <option value="10">Noviembre</option>
+            <option value="11">Diciembre</option>
+          </select>
+        </div>
+
+<div class="field" style="display:flex;align-items:flex-end">
+  <button class="btn btn-outline" onclick="clearDashboardFilters()" style="height:38px;width:100%">
+    Borrar filtro
+  </button>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- KPIs -->
+  <div class="kpis">
+    <div class="kpi k-ink">
+      <div class="label">Total eventos</div>
+      <div class="value" id="dash-total">0</div>
+    </div>
+
+    <div class="kpi">
+      <div class="label">Atrasados</div>
+      <div class="value" id="dash-atrasado">0</div>
+    </div>
+
+    <div class="kpi k-ok">
+      <div class="label">Cerrados</div>
+      <div class="value" id="dash-cerrado">0</div>
+    </div>
+
+    <div class="kpi k-accent">
+      <div class="label">% Cumplimiento</div>
+      <div class="value" id="dash-cumplimiento">0%</div>
+    </div>
+  </div>
+
+
+  <!-- GRAFICAS -->
+  <div class="charts">
+
+    <div class="chart-card">
+      <div class="chart-title">
+        <span class="dot"></span> Estatus de eventos
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-status"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">
+        <span class="dot" style="background:#FDD000;"></span> Por área
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-area"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">
+        <span class="dot"></span> Por responsable
+      </div>
+      <div class="chart-wrap">
+        <canvas id="chart-resp"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</div>
 
 <!-- LOGIN -->
 <div id="login-modal" class="modal-overlay">
@@ -1104,12 +1377,13 @@ textarea.form-control { min-height: 90px; resize: vertical; }
 
 <!-- ==================== SCRIPT ==================== -->
 <script>
+  
 // ═══════════════════════════════════════════════════════
 //  CONFIG & GLOBALS
 // ═══════════════════════════════════════════════════════
 const SUPABASE_URL = 'https://osmevrtfbxuiinjptrvz.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zbWV2cnRmYnh1aWluanB0cnZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg0MTIzMTIsImV4cCI6MjA4Mzk4ODMxMn0.oA1leZOpTP4LGXE_ZCVCvQjtlfoWACtmbdkJ8vCwMD0';
-const ADMIN_PASSWORD = '&U6%Ux';
+const ADMIN_PASSWORD = 'Montoya1710';
 
 let sb = null, events = [], isAdmin = false, chartInst = null, currentFilter = 'all';
 let currentEmlUrl = null; // Para almacenar URL del .eml que se está visualizando
@@ -1170,7 +1444,6 @@ async function loadAdminData() {
     if (error) throw error;
     events = data || [];
     renderTable('admin-body', true);
-    updateStats();
     updateChart();
   } catch(e) { setBodyError('admin-body', e.message); }
 }
@@ -1206,7 +1479,7 @@ function renderTable(tbodyId, adminView) {
 
 function buildRow(ev, adminView) {
   const status = resolveStatus(ev);
-  const statusBadge = statusHTML(status);
+  const statusBadge = statusHTML(status, ev);
   const criticBadge = criticHTML(ev.criticidad);
 
   const desc = esc(ev.descripcion_evento||'');
@@ -1256,8 +1529,20 @@ function buildRow(ev, adminView) {
     actions += `<button class="btn btn-warning btn-sm btn-icon" title="Editar" onclick="editEvent('${ev.id}')"><i class="fas fa-edit"></i></button>`;
   }
 
-  return `<tr>
-    <td><span class="id-badge">${ev.id}</span></td>
+ const sem = getSemaforo(ev);
+
+
+const rowStyle = {
+  rojo: 'border-left:4px solid #E53935;',
+  amarillo: 'border-left:4px solid #FDD000;',
+  verde: 'border-left:4px solid #2E7D32;',
+  azul: 'border-left:4px solid #1565C0;',
+  normal: ''
+}[sem];
+
+
+return `<tr style="${rowStyle}">
+    <td><span class="id-badge">${formatearId(ev.id)}</span></td>
     <td><span class="cell-text" title="${esc(ev.proceso||'')}">${esc(ev.proceso||'')}</span></td>
     <td><span class="cell-text" title="${esc(ev.area||'')}">${esc(ev.area||'')}</span></td>
     <td>${criticBadge}</td>
@@ -1410,6 +1695,21 @@ function bindUI() {
   // Login
   document.getElementById('login-submit')?.addEventListener('click', doLogin);
   document.getElementById('admin-password')?.addEventListener('keyup', e => { if(e.key==='Enter') doLogin(); });
+  
+// ABRIR DASHBOARD
+document.getElementById('open-dashboard-btn')?.addEventListener('click', () => {
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('dashboard-panel').style.display = 'block';
+
+  updateDashboard();
+  loadAutocompleteOptions();
+});
+
+// VOLVER DEL DASHBOARD
+document.getElementById('back-dashboard-btn')?.addEventListener('click', () => {
+  document.getElementById('dashboard-panel').style.display = 'none';
+  document.getElementById('admin-panel').style.display = 'block';
+});
 
   // Logout
   document.getElementById('logout-btn')?.addEventListener('click', doLogout);
@@ -1464,6 +1764,14 @@ function bindUI() {
   // Close modals
   document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.close)));
   document.querySelectorAll('.modal-overlay').forEach(ov => ov.addEventListener('click', e => { if(e.target===ov) closeModal(ov.id); }));
+
+// FILTROS DEL DASHBOARD
+const dashFilters = ['dash-area', 'dash-resp', 'dash-status', 'dash-month'];
+
+dashFilters.forEach(id => {
+  document.getElementById(id)?.addEventListener('input', updateDashboard);
+});
+
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1548,8 +1856,16 @@ async function saveEvent() {
       const { error } = await sb.from('eventos').update(payload).eq('id', id);
       if (error) throw error;
     } else {
-      const { error } = await sb.from('eventos').insert([{ id: Date.now(), ...payload, observacion:'', evidencia_url:null, evidencia_filename:null, created_at: new Date().toISOString() }]);
-      if (error) throw error;
+      const newId = await generarNuevoId();
+
+const { error } = await sb.from('eventos').insert([{
+  id: newId,
+  ...payload,
+  observacion:'',
+  evidencia_url:null,
+  evidencia_filename:null,
+  created_at: new Date().toISOString()
+}]);
     }
     closeModal('event-modal');
     await loadAdminData();
@@ -2179,11 +2495,76 @@ function resolveStatus(ev) {
   return 'en_proceso';
 }
 
-function statusHTML(s) {
-  const map = { cerrado:['cerrado','Cerrado','fa-check-circle'], atrasado:['atrasado','Atrasado','fa-exclamation-triangle'], en_proceso:['proceso','En proceso','fa-spinner'], tbd:['tbd','TBD','fa-question-circle'] };
-  const [cls,txt] = map[s]||['proceso','En proceso','fa-spinner'];
-  return `<span class="badge badge-${cls}">${txt}</span>`;
+function getSemaforo(ev) {
+
+  const hoy = new Date();
+
+  if (ev.estatus === 'cerrado') return 'verde';
+  if (ev.estatus === 'tbd') return 'azul';
+
+  if (!ev.fecha_compromiso) return 'normal';
+
+  const fecha = new Date(ev.fecha_compromiso);
+
+  // 🔴 Atrasado
+  if (fecha < hoy && !ev.evidencia_url) return 'rojo';
+
+  // 🟡 Próximo (3 días)
+  const diff = (fecha - hoy) / (1000 * 60 * 60 * 24);
+  if (diff <= 3 && diff >= 0) return 'amarillo';
+
+  return 'normal';
 }
+
+function statusHTML(s, ev = null) {
+
+  let icon = '';
+  let txt = '';
+  let cls = '';
+
+  if (s === 'cerrado') {
+    icon = '✅';
+    txt = 'Cerrado';
+    cls = 'badge-cerrado';
+  } 
+  else if (s === 'atrasado') {
+    icon = '🔴';
+    txt = 'Atrasado';
+    cls = 'badge-atrasado';
+  } 
+  else if (s === 'tbd') {
+    icon = '🔵';
+    txt = 'TBD';
+    cls = 'badge-tbd';
+  } 
+  else {
+
+    if (ev && ev.fecha_compromiso) {
+
+      const hoy = new Date();
+      const fecha = new Date(ev.fecha_compromiso);
+      const diff = (fecha - hoy) / (1000 * 60 * 60 * 24);
+
+      if (diff <= 3 && diff >= 0) {
+        icon = '🟡';
+        txt = 'Próximo';
+        cls = 'badge-proceso';
+      } else {
+        icon = '🟡';
+        txt = 'En proceso';
+        cls = 'badge-proceso';
+      }
+
+    } else {
+      icon = '🟡';
+      txt = 'En proceso';
+      cls = 'badge-proceso';
+    }
+  }
+
+  return `<span class="badge ${cls}">${icon} ${txt}</span>`;
+}
+
 
 function criticHTML(c) {
   if (!c) return '<span class="badge badge-menor">—</span>';
@@ -2275,6 +2656,216 @@ function trunc(str, n) {
   if (!str) return '';
   return str.length<=n ? str : str.slice(0,n)+'…';
 }
+
+
+function formatearId(id) {
+  if (!id) return '';
+
+  const limpio = id.toString().replace('MP-', '');
+  const numero = parseInt(limpio) || 0;
+
+  // SOLO usa los últimos 4 dígitos reales del consecutivo
+  return 'MP-' + String(numero).slice(-4).padStart(4, '0');
+}
+
+
+function getFilteredEvents() {
+
+  const area = document.getElementById('dash-area')?.value.toLowerCase() || '';
+  const resp = document.getElementById('dash-resp')?.value.toLowerCase() || '';
+  const status = document.getElementById('dash-status')?.value || '';
+  const month = document.getElementById('dash-month')?.value;
+
+  return events.filter(ev => {
+
+    // Área
+    if (area && !(ev.area || '').toLowerCase().includes(area)) return false;
+
+    // Responsable
+    if (resp && !(ev.responsable || '').toLowerCase().includes(resp)) return false;
+
+    // Estatus
+    if (status && resolveStatus(ev) !== status) return false;
+
+    // Mes
+    if (month !== '' && ev.fecha_compromiso) {
+      const d = new Date(ev.fecha_compromiso);
+      if (d.getMonth().toString() !== month) return false;
+    }
+
+    return true;
+  });
+}
+
+function updateDashboard() {
+
+  const data = getFilteredEvents();
+
+  updateDashboardCharts(data);
+
+}
+
+function loadAutocompleteOptions() {
+
+  const areas = new Set();
+  const respons = new Set();
+
+  events.forEach(ev => {
+    if (ev.area) areas.add(ev.area);
+    if (ev.responsable) respons.add(ev.responsable);
+  });
+
+  // 🔹 Llenar áreas
+  const areaList = document.getElementById('areas-list');
+  areaList.innerHTML = [...areas]
+    .sort()
+    .map(a => `<option value="${a}">`)
+    .join('');
+
+
+  // 🔹 Llenar responsables
+  const respList = document.getElementById('resp-list');
+  respList.innerHTML = [...respons]
+    .sort()
+    .map(r => `<option value="${r}">`)
+    .join('');
+}
+
+
+function clearDashboardFilters() {
+
+  document.getElementById('dash-area').value = '';
+  document.getElementById('dash-resp').value = '';
+  document.getElementById('dash-status').value = '';
+  document.getElementById('dash-month').value = '';
+
+  updateDashboard();
+}
+
+
+function updateDashboardCharts(data) {
+
+  const statusCount = { atrasado:0, en_proceso:0, cerrado:0, tbd:0 };
+  const areaCount = {};
+  const respCount = {};
+
+  data.forEach(ev => {
+
+    const s = resolveStatus(ev);
+    if (statusCount[s] !== undefined) statusCount[s]++;
+
+    const a = ev.area || '—';
+    areaCount[a] = (areaCount[a] || 0) + 1;
+
+    const r = ev.responsable || '—';
+    respCount[r] = (respCount[r] || 0) + 1;
+
+  });
+
+
+
+  // ✅ KPIs
+  const total = data.length;
+  const atrasado = statusCount.atrasado;
+  const cerrado = statusCount.cerrado;
+  const cumplimiento = total ? Math.round((cerrado / total) * 100) : 0;
+
+  document.getElementById('dash-total').textContent = total;
+  document.getElementById('dash-atrasado').textContent = atrasado;
+  document.getElementById('dash-cerrado').textContent = cerrado;
+  document.getElementById('dash-cumplimiento').textContent = cumplimiento + '%';
+
+  // ✅ GRÁFICAS
+  renderChart('chart-status', statusCount, 'doughnut');
+  renderChart('chart-area', areaCount, 'bar');
+  renderChart('chart-resp', respCount, 'bar');
+}
+
+
+
+
+let dashCharts = {};
+
+function renderChart(id, obj, type) {
+
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+
+  // 🔥 destruir gráfico previo
+  if (dashCharts[id]) {
+    dashCharts[id].destroy();
+  }
+
+  const entries = Object.entries(obj)
+  .sort((a, b) => b[1] - a[1]) // 🔥 de mayor a menor
+  .slice(0, 5); // 🔥 solo top 5
+
+const labels = entries.map(e => e[0]);
+const data = entries.map(e => e[1]);
+
+  dashCharts[id] = new Chart(ctx, {
+    plugins: [ChartDataLabels],
+    type: type,
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: [
+          '#E53935',
+          '#FB8C00',
+          '#43A047',
+          '#1E88E5',
+          '#8E24AA',
+          '#FDD835'
+        ]
+      }]
+    },
+    
+options: {
+  indexAxis: 'y',
+  responsive: true,
+  plugins: {
+  legend: { display: false },
+
+  datalabels: {datalabels: 'center',
+  color: '#ffffff',
+  font: {
+    weight: 'bold',
+    size: 12
+  },
+  formatter: (value) => value
+}
+
+  }
+
+},
+ 
+scales: {
+    x: {
+      display: false
+    },
+    y: {
+      grid: { display: false }
+    }
+  }
+});
+}
+
+async function generarNuevoId() {
+
+  const numeros = events.map(function(ev) {
+    const n = parseInt((ev.id || '').toString().replace(/\D/g, '')) || 0;
+    return n;
+  });
+
+  const max = numeros.length ? Math.max.apply(null, numeros) : 0;
+
+  const nuevo = max + 1;
+
+  return 'MP-' + String(nuevo).padStart(4, '0');
+}
+
+
 </script>
 </body>
 </html>
